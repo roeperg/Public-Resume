@@ -1,6 +1,6 @@
 GREGORY A. ROEPER
 
-Atlanta, GA | roeperg@gmail.com | LinkedIn
+Atlanta, GA | roeperg@gmail.com | [LinkedIn](https://www.linkedin.com/in/gregoryroeper/) 
 
 Professional Summary
 
