@@ -216,7 +216,7 @@ class AppTheme:
         }
         for widget in (
             ".", "TFrame", "TLabel", "TButton", "TRadiobutton", "TCheckbutton",
-            "TSpinbox", "TLabelframe", "TLabelframe.Label",
+            "TLabelframe", "TLabelframe.Label",
         ):
             self.style.configure(widget, **common)
 
@@ -243,17 +243,41 @@ class AppTheme:
             expand=[("selected", [1, 1, 1, 0])],
         )
 
-        self.style.configure(
-            "TEntry", fieldbackground=self.text_bg, foreground=self.text_fg, padding=4
+        input_common = {
+            "fieldbackground": self.text_bg,
+            "foreground": self.text_fg,
+            "background": self.surface,
+            "bordercolor": self.border,
+            "lightcolor": self.border,
+            "darkcolor": self.border,
+            "insertcolor": self.text_insert,
+            "arrowcolor": self.fg,
+            "font": ui,
+            "padding": 4,
+        }
+        self.style.configure("TEntry", **input_common)
+        self.style.map(
+            "TEntry",
+            fieldbackground=[("readonly", self.text_bg), ("disabled", self.surface_alt)],
+            foreground=[("disabled", self.muted)],
         )
-        self.style.configure(
+
+        self.style.configure("TSpinbox", **input_common)
+        self.style.map(
+            "TSpinbox",
+            fieldbackground=[("readonly", self.text_bg), ("disabled", self.surface_alt)],
+            foreground=[("disabled", self.muted)],
+        )
+
+        self.style.configure("TCombobox", **input_common)
+        self.style.map(
             "TCombobox",
-            fieldbackground=self.text_bg,
-            foreground=self.text_fg,
-            arrowcolor=self.fg,
-            padding=4,
+            fieldbackground=[("readonly", self.text_bg), ("disabled", self.surface_alt)],
+            foreground=[("readonly", self.text_fg), ("disabled", self.muted)],
+            background=[("readonly", self.surface), ("disabled", self.surface_alt)],
+            arrowcolor=[("disabled", self.muted)],
         )
-        self.style.map("TCombobox", fieldbackground=[("readonly", self.text_bg)])
+        self._configure_combobox_popdown()
 
         self.style.configure(
             "Treeview",
@@ -283,6 +307,16 @@ class AppTheme:
         self.style.configure("Muted.TLabel", foreground=self.muted, font=(ui[0], max(8, ui[1] - 1)))
         self.style.configure("Heading.TLabel", font=heading, foreground=self.fg)
         self.style.configure("Title.TLabel", font=(ui[0], ui[1] + 4, "bold"))
+
+    def _configure_combobox_popdown(self) -> None:
+        """Style the Listbox used inside Combobox dropdowns."""
+        try:
+            self.root.option_add("*TCombobox*Listbox.background", self.text_bg)
+            self.root.option_add("*TCombobox*Listbox.foreground", self.text_fg)
+            self.root.option_add("*TCombobox*Listbox.selectBackground", self.selection_bg)
+            self.root.option_add("*TCombobox*Listbox.selectForeground", self.text_fg)
+        except Exception:
+            pass
 
     def set_theme(self, name: str, *, persist: bool = True, refresh_tabs: bool = True) -> None:
         if name not in (THEME_LIGHT, THEME_DARK):
